@@ -32,6 +32,8 @@ app.set('view engine', 'hbs')
 app.get('/', (req, res) => {
   Todo.find()//取todo model 裡的所有資料
     .lean()//把 mongoose 的 model 物件轉成乾淨的javascript 資料陣列
+    .sort({ _id: 'asc' })// 新增這裡：根據 _id 升冪排序
+    //sort() 是 Mongoose 提供的排序方法，裡面的參數 { _id: 'asc' } 代表「根據 _id 用升冪 (ascending) 排序」，反之，如果要降冪 (desscending) 排序，可以寫 'desc'。
     .then(todos => res.render('index', { todos }))//將資料傳給index 樣板
     .catch(error => console.error(error))//錯誤處理
 
