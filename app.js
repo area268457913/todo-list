@@ -7,7 +7,7 @@ const exphbs = require('express-handlebars')
 // 引用 body-parser
 const bodyParser = require('body-parser')
 const app = express()
-const port = 3000
+const PORT = process.env.PORT || 3000
 // 載入 method-override
 const methodOverride = require('method-override')
 // 引用路由器
@@ -99,6 +99,6 @@ app.set('view engine', 'hbs')
 //     .catch(error => console.log(error))
 // })
 
-app.listen(port, () => {
-  console.log(`App is running on http://localhost:${port}`)
+app.listen(PORT, () => {
+  console.log(`App is running on http://localhost:${PORT}`)
 })
