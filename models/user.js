@@ -3,15 +3,15 @@ const Schema = mongoose.Schema
 const userSchema = new Schema({
   name: {
     type: String, // 資料型別是字串
-    require: true // 這是必填欄位，不能空白
+    required: true // 這是必填欄位，不能空白
   },
   email: {
     type: String,
-    require: true
+    required: true
   },
   password: {
     type: String,
-    require: true
+    required: true
   },
   createAt: { // 使用者註冊時間
     type: Date,
@@ -20,4 +20,4 @@ const userSchema = new Schema({
 
 
 })
-module.exports = mongoose.model('User', userSchema)// 透過 module.exports 把這個 schema 輸出，匯出的時候我們把這份 schema 命名為 Todo，以後在其他的檔案直接使用 Todo 就可以操作和「待辦事項」有關的資料
+module.exports = mongoose.model('User', userSchema)// 透過 module.exports 把這個 schema 輸出，匯出的時候我們把這份 schema 命名為 User，以後在其他的檔案直接使用 User 就可以操作和「待辦事項」有關的資料
