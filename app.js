@@ -7,6 +7,7 @@ const exphbs = require('express-handlebars')
 // 引用 body-parser
 const bodyParser = require('body-parser')
 const app = express()
+const session = require('express-session')
 const PORT = process.env.PORT || 3000
 // 載入 method-override
 const methodOverride = require('method-override')
@@ -34,6 +35,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // 設定每一筆請求都會透過 methodOverride 進行前置處理
 app.use(methodOverride('_method'))
+
+app.use(session({
+  secret: 'ThisIsMySecret', // secret 是 session 用來驗證 session id 的字串， 現在我們設定為 'ThisIsMySecret'，但你可以隨機輸入一個字串。
+  resave: false, // 當設定為 true 時 ， 會在每一次與使用者互動後，強制把 session 更新到 session store 裡
+  saveUninitialized: true // 強制將未初始化的 session 存回 session store 。 例如未登入的使用者的 session。
+}))
 
 // 將 request 導入路由器
 app.use(routes)
