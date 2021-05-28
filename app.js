@@ -13,6 +13,9 @@ const PORT = process.env.PORT || 3000
 const methodOverride = require('method-override')
 // 引用路由器
 const routes = require('./routes')
+//  載入設定檔，要寫在 express-session 以後
+const usePassport = require('./config/passport')
+
 
 require('./config/mongoose')
 
@@ -42,6 +45,8 @@ app.use(session({
   saveUninitialized: true // 強制將未初始化的 session 存回 session store 。 例如未登入的使用者的 session。
 }))
 
+// 呼叫 Passport 函式並傳入 app ， 要寫在路由之前
+usePassport(app)
 // 將 request 導入路由器
 app.use(routes)
 
