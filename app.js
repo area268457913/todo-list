@@ -1,17 +1,22 @@
 const express = require('express')
-// 載入 mongoose
-// const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
-//載入todo model
-// const Todo = require('./models/todo')
-// 引用 body-parser
-const bodyParser = require('body-parser')
-const app = express()
-const port = 3000
 // 載入 method-override
 const methodOverride = require('method-override')
+// 引用 body-parser
+const bodyParser = require('body-parser')
+const session = require('express-session')
+const flash = require('connect-flash')
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+const app = express()
+
+const PORT = process.env.PORT
+
 // 引用路由器
 const routes = require('./routes')
+//  載入設定檔，要寫在 express-session 以後
+const usePassport = require('./config/passport')
 
 require('./config/mongoose')
 
@@ -35,6 +40,29 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // 設定每一筆請求都會透過 methodOverride 進行前置處理
 app.use(methodOverride('_method'))
 
+app.use(session({
+  secret: process.env.SESSION_SECRET, // secret 是 session 用來驗證 session id 的字串， 現在我們設定為 'ThisIsMySecret'，但你可以隨機輸入一個字串。
+  resave: false, // 當設定為 true 時 ， 會在每一次與使用者互動後，強制把 session 更新到 session store 裡
+  saveUninitialized: true // 強制將未初始化的 session 存回 session store 。 例如未登入的使用者的 session。
+}))
+
+// 呼叫 Passport 函式並傳入 app ， 要寫在路由之前
+usePassport(app)
+
+app.use(flash())
+// 使用 app.use 代表這組 middleware 會作用於所有的路由
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated()
+  // res.locals 是 Express.js 幫我們開的一條捷徑，放在 res.locals 裡的資料，所有的 view 都可以存取
+  // res.locals.isAuthenticated : 把 req.isAuthenticated() 回傳的布林值，交給 res 使用
+  res.locals.user = req.user
+  //  res.locals.user : 把使用者資料交給 res 使用
+  res.locals.success_msg = req.flash('success_msg')
+  //  設定 success_msg 訊息
+  res.locals.warning_msg = req.flash('warning_msg')
+  //  設定 warning_msg 訊息
+  next()
+})
 // 將 request 導入路由器
 app.use(routes)
 
@@ -99,6 +127,6 @@ app.set('view engine', 'hbs')
 //     .catch(error => console.log(error))
 // })
 
-app.listen(port, () => {
-  console.log(`App is running on http://localhost:${port}`)
+app.listen(PORT, () => {
+  console.log(`App is running on http://localhost:${PORT}`)
 })
